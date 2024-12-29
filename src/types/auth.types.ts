@@ -1,10 +1,12 @@
 export interface User {
 
-    names      : string;
-    lastnames  : string;
-    age        : number;
-    email      : string;
-    password   : string;
+    names         : string;
+    lastnames     : string;
+    age           : number;
+    email         : string;
+    password      : string;
+    profileImage? : File;
+    
   }
   
   export interface AuthResponse {
@@ -29,6 +31,12 @@ export interface User {
     names: string;
     lastnames: string;
     age: number;
+    email: string;
+    password: string;
+    profileImage?: File;
+  }
+
+  export interface LoginData {
     email: string;
     password: string;
   }

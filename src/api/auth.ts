@@ -1,10 +1,7 @@
-import axios from 'axios';
 import { AuthResponse, RegisterData, User } from '../types/auth.types';
+import { api } from './AxiosRouter';
 
-export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
-  withCredentials: true, 
-});
+
 
 export const authApi = {
   login: async (email: string, password: string): Promise<AuthResponse> => {
@@ -13,7 +10,21 @@ export const authApi = {
   },
 
   register: async (userData: RegisterData): Promise<AuthResponse> => {
-    const { data } = await api.post<AuthResponse>('/register', userData);
+    const formData = new FormData();
+    
+    Object.entries(userData).forEach(([key, value]) => {
+      if (key === 'profileImage' && value instanceof File) {
+        formData.append(key, value);
+      } else {
+        formData.append(key, String(value));
+      }
+    });
+
+    const { data } = await api.post<AuthResponse>('/register', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return data;
   },
 

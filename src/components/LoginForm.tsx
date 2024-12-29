@@ -1,22 +1,29 @@
-// src/components/LoginForm.tsx
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '../context/Auth';
+import { LoginData } from '../types/auth.types';
+import { loginSchema } from '../utils/validations/schemas';
+import { PasswordInput } from './shared/PasswordInput';
 
 interface LoginFormProps {
   switchToRegister: () => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({
-  switchToRegister,
-}) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ switchToRegister }) => {
   const { login, isLoading, error } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginData>({
+    resolver: zodResolver(loginSchema)
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await login(email, password);
+  const onSubmit = async (data: LoginData) => {
+    await login(data.email, data.password);
   };
 
   return (
@@ -25,14 +32,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <h2 className="text-center text-2xl font-bold text-primary">
           Sign in to your account
         </h2>
-
         {error && (
           <div className="alert alert-error shadow-lg">
             <span>{error}</span>
           </div>
         )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="form-control">
             <label htmlFor="email" className="label">
               <span className="label-text">Email Address</span>
@@ -40,33 +45,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             <input
               id="email"
               type="email"
-              placeholder="Enter your email"
-              className="input input-bordered"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              className={`input input-bordered ${errors.email ? 'input-error' : ''}`}
+              {...register('email')}
             />
+            {errors.email && <span className="text-error">{errors.email.message}</span>}
           </div>
-
-          <div className="form-control">
-            <label htmlFor="password" className="label">
-              <span className="label-text">Password</span>
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              className="input input-bordered"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+          
+          <PasswordInput
+            id="password"
+            name="password"
+            label="Password"
+            register={register}
+            errors={errors}
+          />
 
           <button
             type="submit"
             disabled={isLoading}
-            className={`btn btn-primary w-full ${isLoading ? 'loading' : ''}`}
+            className="btn btn-primary w-full"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign in'}
           </button>
@@ -86,4 +82,3 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     </div>
   );
 };
-
