@@ -1,36 +1,31 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { store } from './store/store';
-import LoginPage from './pages/LoginPage';
-import HomePage from './pages/HomePage';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { PrivateRoute } from './components/PrivateRoute';
+import { AuthRoute } from './components/AuthRoute';
+import { AuthPage } from './pages/AuthPage';
+import { DashboardPage } from './pages/DashboardPage';
 
-function App() {
+const App = () => {
   return (
-    <Provider store={store}>
-      <Router>
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
+
+          <Route element={<AuthRoute />}>
+            <Route path="/login" element={<AuthPage />} />
+          </Route>
+
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Route>
+
+
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-      </Router>
-    </Provider>
+      </AuthProvider>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
