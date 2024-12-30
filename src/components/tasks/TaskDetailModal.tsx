@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Task } from '../../interfaces/Tasks';
+import { useTaskContext } from '../../context/TaskContext';
 import { TaskProvider } from '../../api/taskProvider';
 
 interface TaskDetailModalProps {
@@ -7,10 +8,10 @@ interface TaskDetailModalProps {
   onClose: () => void;
   taskId: string | null;
   mode: 'view' | 'edit';
-  onUpdate?: () => void;
 }
 
-export const TaskDetailModal = ({ isOpen, onClose, taskId, mode, onUpdate }: TaskDetailModalProps) => {
+export const TaskDetailModal = ({ isOpen, onClose, taskId, mode }: TaskDetailModalProps) => {
+  const { updateTask } = useTaskContext();
   const [task, setTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -55,8 +56,7 @@ export const TaskDetailModal = ({ isOpen, onClose, taskId, mode, onUpdate }: Tas
     try {
       setIsSaving(true);
       setError(null);
-      await TaskProvider.updateTask(taskId, formData);
-      onUpdate?.();
+      await updateTask(taskId, formData);
       onClose();
     } catch (err) {
       setError('Failed to update task');
@@ -65,6 +65,7 @@ export const TaskDetailModal = ({ isOpen, onClose, taskId, mode, onUpdate }: Tas
       setIsSaving(false);
     }
   };
+
 
   if (!isOpen) return null;
 

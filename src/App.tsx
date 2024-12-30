@@ -5,12 +5,14 @@ import { AuthRoute } from './components/AuthRoute';
 import { AuthPage } from './pages/AuthPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ThemeProvider } from './context/ThemeContext';
+import { TaskContextProvider } from './context/TaskContext';
 
 const App = () => {
   return (
     <BrowserRouter>
     <ThemeProvider>
       <AuthProvider>
+      <TaskContextProvider>
         <Routes>
 
           <Route element={<AuthRoute />}>
@@ -25,6 +27,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        </TaskContextProvider>
       </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

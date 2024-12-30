@@ -1,30 +1,27 @@
 import { useState } from 'react';
-import { TaskProvider } from '../../api/taskProvider';
-
+import { useTaskContext } from '../../context/TaskContext';
 interface DeleteTaskProps {
   taskId: string;
   onDelete?: () => void;
 }
 
 export const DeleteTask = ({ taskId, onDelete }: DeleteTaskProps) => {
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleDelete = async () => {
-    try {
-      setIsDeleting(true);
-      setError(null);
-      await TaskProvider.deleteTask(taskId);
-      setShowConfirm(false);
-      onDelete?.();
-    } catch (err) {
-      setError('Failed to delete task');
-      console.error('Error deleting task:', err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+    const { deleteTask } = useTaskContext();
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+  
+    const handleDelete = async () => {
+      try {
+        setIsDeleting(true);
+        await deleteTask(taskId);
+        setShowConfirm(false);
+      } catch (err) {
+        setError('Failed to delete task');
+      } finally {
+        setIsDeleting(false);
+      }
+    };
 
   return (
     <>

@@ -1,40 +1,13 @@
 import { useState } from 'react';
 import { Calendar, FileText, BookCheck } from 'lucide-react';
-import { Task } from '../../interfaces/Tasks';
 import { TaskModal } from './TaskModal';
-
-interface TaskStatsProps {
-  tasks: Task[];
-  isLoading: boolean;
-}
+import { useTaskContext } from '../../context/TaskContext';
 
 type ModalType = 'today' | 'completed' | 'pending' | null;
 
-export const TaskStats = ({ tasks, isLoading }: TaskStatsProps) => {
+export const TaskStats = () => {
   const [modalType, setModalType] = useState<ModalType>(null);
-
-  const getTodaysTasks = (tasks: Task[]) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return tasks.filter(task => {
-      const taskDate = new Date(task.createAt);
-      taskDate.setHours(0, 0, 0, 0);
-      return taskDate.getTime() === today.getTime() && !task.completed;
-    });
-  };
-
-  const getCompletedTasks = (tasks: Task[]) => {
-    return tasks.filter(task => task.completed);
-  };
-
-  const getPendingTasks = (tasks: Task[]) => {
-    return tasks.filter(task => !task.completed);
-  };
-
-  const todaysTasks = !isLoading ? getTodaysTasks(tasks) : [];
-  const completedTasks = !isLoading ? getCompletedTasks(tasks) : [];
-  const pendingTasks = !isLoading ? getPendingTasks(tasks) : [];
+  const { isLoading, todayTasks, completedTasks, pendingTasks } = useTaskContext();
 
   const getModalTitle = (type: ModalType): string => {
     switch (type) {
@@ -49,10 +22,10 @@ export const TaskStats = ({ tasks, isLoading }: TaskStatsProps) => {
     }
   };
 
-  const getModalTasks = (type: ModalType): Task[] => {
+  const getModalTasks = (type: ModalType) => {
     switch (type) {
       case 'today':
-        return todaysTasks;
+        return todayTasks;
       case 'completed':
         return completedTasks;
       case 'pending':
@@ -80,7 +53,7 @@ export const TaskStats = ({ tasks, isLoading }: TaskStatsProps) => {
               <div>
                 <h2 className="card-title text-base">Today's Tasks</h2>
                 <div className="stat-value text-primary text-2xl">
-                  {isLoading ? '...' : todaysTasks.length}
+                  {isLoading ? '...' : todayTasks.length}
                 </div>
               </div>
             </div>
