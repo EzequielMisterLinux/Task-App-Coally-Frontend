@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
+import { LoginData } from '../../types/auth.types';
 
 interface PasswordInputProps {
   id: string;
-  name: string;
+  name: keyof LoginData;
   label: string;
-  register: any; 
-  errors: any; 
+  register: UseFormRegister<LoginData>;
+  errors: FieldErrors<LoginData>;
   validation?: object;
 }
 
@@ -19,7 +21,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
   validation
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-
+  
   return (
     <div className="form-control">
       <label htmlFor={id} className="label">
@@ -44,7 +46,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
           )}
         </button>
       </div>
-      {errors[name] && <span className="text-error">{errors[name].message}</span>}
+      {errors[name] && <span className="text-error">{errors[name]?.message?.toString()}</span>}
     </div>
   );
 };

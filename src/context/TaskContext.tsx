@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Task, CreateTaskDto } from '../interfaces/Tasks';
 import { TaskProvider } from '../api/taskProvider';
+import { AlertModal } from '../modals/AlertModal';
 
 interface TaskContextType {
   tasks: Task[];
@@ -24,6 +25,20 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [alertModalState, setAlertModalState] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error' | 'info';
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'success',
+    message: ''
+  });
+  
+
+  const showAlert = (type: 'success' | 'error' | 'info', message: string) => {
+    setAlertModalState({ isOpen: true, type, message });
+  };
 
   useEffect(() => {
     setFilteredTasks(tasks);
@@ -39,13 +54,8 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
     });
   };
 
-  const getCompletedTasks = (tasks: Task[]) => {
-    return tasks.filter(task => task.completed);
-  };
-
-  const getPendingTasks = (tasks: Task[]) => {
-    return tasks.filter(task => !task.completed);
-  };
+  const getCompletedTasks = (tasks: Task[]) => tasks.filter(task => task.completed);
+  const getPendingTasks = (tasks: Task[]) => tasks.filter(task => !task.completed);
 
   const refreshTasks = async () => {
     try {
@@ -54,8 +64,10 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
       const response = await TaskProvider.getTasks();
       setTasks(response);
     } catch (err) {
+      console.error(err);
+      
       setError('Failed to fetch tasks');
-      console.error('Error fetching tasks:', err);
+      showAlert('error', 'Failed to fetch tasks');
     } finally {
       setIsLoading(false);
     }
@@ -64,12 +76,11 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
   const createTask = async (taskData: CreateTaskDto) => {
     try {
       setIsLoading(true);
-      setError(null);
       await TaskProvider.createTask(taskData);
       await refreshTasks();
+      showAlert('success', 'Task created successfully!');
     } catch (err) {
-      setError('Failed to create task');
-      console.error('Error creating task:', err);
+      showAlert('error', 'Failed to create task');
       throw err;
     } finally {
       setIsLoading(false);
@@ -79,8 +90,6 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
   const updateTask = async (taskId: string, taskData: Partial<Task>) => {
     try {
       setIsLoading(true);
-      setError(null);
-
       const updateData = {
         title: taskData.title,
         description: taskData.description,
@@ -88,9 +97,9 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
       };
       await TaskProvider.updateTask(taskId, updateData);
       await refreshTasks();
+      showAlert('success', 'Task updated successfully!');
     } catch (err) {
-      setError('Failed to update task');
-      console.error('Error updating task:', err);
+      showAlert('error', 'Failed to update task');
       throw err;
     } finally {
       setIsLoading(false);
@@ -100,12 +109,11 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
   const deleteTask = async (taskId: string) => {
     try {
       setIsLoading(true);
-      setError(null);
       await TaskProvider.deleteTask(taskId);
       await refreshTasks();
+      showAlert('success', 'Task deleted successfully!');
     } catch (err) {
-      setError('Failed to delete task');
-      console.error('Error deleting task:', err);
+      showAlert('error', 'Failed to delete task');
       throw err;
     } finally {
       setIsLoading(false);
@@ -131,7 +139,17 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
     deleteTask,
   };
 
-  return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
+  return (
+    <TaskContext.Provider value={value}>
+      {children}
+      <AlertModal
+        isOpen={alertModalState.isOpen}
+        onClose={() => setAlertModalState(prev => ({ ...prev, isOpen: false }))}
+        type={alertModalState.type}
+        message={alertModalState.message}
+      />
+    </TaskContext.Provider>
+  );
 };
 
 export const useTaskContext = () => {

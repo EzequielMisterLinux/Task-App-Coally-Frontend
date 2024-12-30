@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '../context/auth/Auth';
 import type { RegisterData } from '../types/auth.types';
@@ -9,41 +9,60 @@ interface RegisterFormProps {
   switchToLogin: () => void;
 }
 
+interface FormData extends Partial<RegisterData> {
+  confirmPassword?: string;
+}
+
+type ValidationErrors = Record<string, string>;
+
 export const RegisterForm: React.FC<RegisterFormProps> = ({ switchToLogin }) => {
   const { register: registerUser, isLoading, error } = useAuth();
-  const [formData, setFormData] = useState<Partial<RegisterData>>({});
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState<FormData>({});
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const validateField = (name: string, value: any): string => {
+  const validateField = (name: keyof FormData, value: string | number | File | undefined): string => {
+    if (value === undefined) return '';
+
     switch (name) {
-      case 'names':
-        return !value ? 'Names are required' :
-          value.length < 2 ? 'Names should be at least 2 characters long' : '';
-      case 'lastnames':
-        return !value ? 'Lastnames are required' :
-          value.length < 2 ? 'Lastnames should be at least 2 characters long' : '';
-      case 'age':
-        const age = Number(value);
+      case 'names': {
+        const val = String(value);
+        return !val ? 'Names are required' :
+          val.length < 2 ? 'Names should be at least 2 characters long' : '';
+      }
+      case 'lastnames': {
+        const val = String(value);
+        return !val ? 'Lastnames are required' :
+          val.length < 2 ? 'Lastnames should be at least 2 characters long' : '';
+      }
+      case 'age': {
+        const ageNum = Number(value);
         return !value ? 'Age is required' :
-          age < 18 ? 'You must be at least 18 years old' :
-          age > 120 ? 'Please enter a valid age' : '';
-      case 'email':
-        return !value ? 'Email is required' :
-          !emailSchema.safeParse(value).success ? 'Invalid email format' : '';
-      case 'password':
-        return !value ? 'Password is required' :
-          !passwordSchema.safeParse(value).success ? 
+          ageNum < 18 ? 'You must be at least 18 years old' :
+          ageNum > 120 ? 'Please enter a valid age' : '';
+      }
+      case 'email': {
+        const val = String(value);
+        return !val ? 'Email is required' :
+          !emailSchema.safeParse(val).success ? 'Invalid email format' : '';
+      }
+      case 'password': {
+        const val = String(value);
+        return !val ? 'Password is required' :
+          !passwordSchema.safeParse(val).success ? 
           'Password must be at least 8 characters and include a letter and number' : '';
-      case 'confirmPassword':
-        return !value ? 'Please confirm your password' :
-          value !== formData.password ? 'Passwords do not match' : '';
+      }
+      case 'confirmPassword': {
+        const val = String(value);
+        return !val ? 'Please confirm your password' :
+          val !== formData.password ? 'Passwords do not match' : '';
+      }
       default:
         return '';
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
     
     if (type === 'file' && files) {
@@ -73,17 +92,16 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ switchToLogin }) => 
       }
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
-      const error = validateField(name, value);
+      const error = validateField(name as keyof FormData, value);
       setValidationErrors(prev => ({ ...prev, [name]: error }));
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
 
-    const errors: Record<string, string> = {};
-    Object.entries(formData).forEach(([key, value]) => {
+    const errors: ValidationErrors = {};
+    (Object.entries(formData) as [keyof FormData, FormData[keyof FormData]][]).forEach(([key, value]) => {
       const error = validateField(key, value);
       if (error) errors[key] = error;
     });
@@ -205,7 +223,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ switchToLogin }) => 
             error={validationErrors.password}
           />
 
-          {/* Confirm Password Input */}
+
           <PasswordInput
             id="confirmPassword"
             name="confirmPassword"

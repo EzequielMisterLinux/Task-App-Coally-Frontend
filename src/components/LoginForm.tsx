@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '../context/auth/Auth';
@@ -13,12 +13,11 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({ switchToRegister }) => {
   const { login, isLoading, error } = useAuth();
-  
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginData>({
+  } = useForm<LoginData & FieldValues>({
     resolver: zodResolver(loginSchema)
   });
 
@@ -50,7 +49,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ switchToRegister }) => {
             />
             {errors.email && <span className="text-error">{errors.email.message}</span>}
           </div>
-          
           <PasswordInput
             id="password"
             name="password"
@@ -58,7 +56,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ switchToRegister }) => {
             register={register}
             errors={errors}
           />
-
           <button
             type="submit"
             disabled={isLoading}
@@ -67,7 +64,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ switchToRegister }) => {
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign in'}
           </button>
         </form>
-
         <p className="text-center text-sm mt-4">
           Don&apos;t have an account?{' '}
           <button

@@ -1,15 +1,9 @@
 import { useTaskContext } from '../../context/TaskContext';
-
 import { TaskCard } from './TaskCard';
 
-interface TaskListProps {
-  isLoading: boolean;
-  error: string | null;
-}
+export const TaskList = () => {
+  const { filteredTasks, isLoading, error } = useTaskContext();
 
-export const TaskList = ({ isLoading, error }: TaskListProps) => {
-  const { filteredTasks } = useTaskContext();
-  
   return (
     <div className="mt-8">
       <h2 className="text-xl font-bold mb-4">Recent Tasks</h2>
