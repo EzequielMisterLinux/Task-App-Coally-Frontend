@@ -1,0 +1,14 @@
+[phases.setup]
+dependsOn = ["nodejs"]
+
+[phases.nodejs]
+cmds = [
+    "npm ci",
+    "npm run build"
+]
+
+[phases.caddy]
+nixPkgs = ["caddy"]
+
+[start]
+cmd = "caddy run --config Caddyfile --adapter caddyfile"
