@@ -12,10 +12,9 @@ export const TaskModal = ({ isOpen, onClose, title, tasks }: TaskModalProps) => 
 
   return (
     <>
-      {/* Modal backdrop */}
+
       <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={onClose}></div>
       
-      {/* Modal content */}
       <div className="modal modal-open z-50">
         <div className="modal-box w-11/12 max-w-5xl">
           <div className="flex justify-between items-center mb-6">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { useAuth } from '../context/Auth';
+import { useAuth } from '../context/auth/Auth';
 import type { RegisterData } from '../types/auth.types';
 import { emailSchema, passwordSchema } from '../utils/validations/schemas';
 import { PasswordInput } from './shared/PasswordInputRegister';

@@ -1,9 +1,28 @@
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import {  useState } from 'react';
 import { NewTaskModal } from './NewTaskModal';
+import { useTaskContext } from '../../context/TaskContext';
 
 export const TaskHeader = () => {
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const { tasks, setFilteredTasks } = useTaskContext();
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    
+    if (!term.trim()) {
+      setFilteredTasks(tasks);
+      return;
+    }
+
+    const filtered = tasks.filter(task => 
+      task.title.toLowerCase().includes(term.toLowerCase()) ||
+      task.description?.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredTasks(filtered);
+  };
 
   return (
     <>
@@ -15,9 +34,11 @@ export const TaskHeader = () => {
               type="text"
               placeholder="Search tasks..."
               className="input input-bordered w-full max-w-xs"
+              value={searchTerm}
+              onChange={handleSearch}
             />
           </div>
-          <button 
+          <button
             className="btn btn-primary"
             onClick={() => setIsNewTaskModalOpen(true)}
           >
@@ -26,7 +47,6 @@ export const TaskHeader = () => {
           </button>
         </div>
       </div>
-
       <NewTaskModal
         isOpen={isNewTaskModalOpen}
         onClose={() => setIsNewTaskModalOpen(false)}

@@ -5,14 +5,18 @@ import { TaskList } from '../components/tasks/TaskList';
 import { useTaskContext } from '../context/TaskContext';
 
 export const DashboardPage = () => {
-  const { error } = useTaskContext();
+  const { tasks, isLoading, error } = useTaskContext();
 
   return (
     <Layout>
       <div className="space-y-6">
         <TaskHeader />
         <TaskStats />
-        <TaskList error={error} />
+        <TaskList 
+          tasks={tasks} 
+          isLoading={isLoading} 
+          error={error} 
+        />
       </div>
     </Layout>
   );

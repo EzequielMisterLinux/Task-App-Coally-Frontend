@@ -1,7 +1,7 @@
 import { useEffect, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthState, RegisterData } from '../types/auth.types';
-import { authApi } from '../api/auth';
+import { AuthState, RegisterData } from '../../types/auth.types';
+import { authApi } from '../../api/auth';
 import { AuthContext } from './AuthType';
 
 
@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         error: null
       });
       navigate('/dashboard');
+      window.location.reload()
     } catch (error) {
       console.error(error);
       
@@ -75,6 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         error: null
       });
       navigate('/dashboard');
+      window.location.reload()
     } catch (error) {
       console.error(error);
       
@@ -96,6 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         error: null
       });
       navigate('/login');
+      window.location.reload()
     } catch (error) {
       console.error('Logout failed:', error);
     }

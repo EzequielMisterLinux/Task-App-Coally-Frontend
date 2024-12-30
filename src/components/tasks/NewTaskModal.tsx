@@ -1,4 +1,3 @@
-// components/tasks/NewTaskModal.tsx
 import { useState } from 'react';
 import { useTaskContext } from '../../context/TaskContext';
 
@@ -26,7 +25,7 @@ export const NewTaskModal = ({ isOpen, onClose }: NewTaskModalProps) => {
         completed: false,
       });
       
-      // Reset form and close modal
+
       setFormData({ title: '', description: '' });
       onClose();
     } catch (err) {

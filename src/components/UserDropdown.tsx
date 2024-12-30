@@ -1,13 +1,15 @@
 import React, { useState, Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import { useAuth } from '../context/Auth';
-import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/auth/Auth';
+import { useTheme } from '../context/theme/ThemeContext';
 import type { User } from '../types/auth.types';
 import { LogOut, User as UserIcon, Mail, UserCircle, Sun, Moon } from 'lucide-react';
 
 interface UserDropdownProps {
   user: User;
 }
+
+type Theme = 'light' | 'dark' | 'cupcake' | 'dracula'
 
 export const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
   const { logout } = useAuth();
@@ -29,7 +31,7 @@ export const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
   return (
     <>
       <Menu as="div" className="relative">
-        {/* Existing Menu.Button code */}
+       
         <Menu.Button className="btn btn-ghost rounded-full hover:bg-base-200 flex items-center gap-2 px-2 focus:outline-none">
           <div className="avatar">
             <div className="w-8 h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
@@ -170,7 +172,7 @@ export const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
                 <select 
                   className="select select-sm select-bordered w-fit"
                   value={theme}
-                  onChange={(e) => handleThemeChange(e.target.value as any)}
+                  onChange={(e) => handleThemeChange(e.target.value as Theme)}
                 >
                   <option value="light">Light</option>
                   <option value="dark">Dark</option>

@@ -1,3 +1,4 @@
+import { useTaskContext } from '../../context/TaskContext';
 import { Task } from '../../interfaces/Tasks';
 import { TaskActions } from './TaskActions';
 
@@ -6,8 +7,17 @@ interface TaskCardProps {
 }
 
 export const TaskCard = ({ task }: TaskCardProps) => {
+  const { updateTask } = useTaskContext();
+  
+  const handleToggleComplete = async () => {
+    await updateTask(task._id, { completed: !task.completed });
+  };
+
   return (
-    <div className="card bg-base-100 shadow-xl">
+    <div 
+      className="card bg-base-100 shadow-xl cursor-pointer hover:bg-base-200 transition-colors"
+      onClick={handleToggleComplete}
+    >
       <div className="card-body">
         <div className="flex justify-between items-start">
           <h2 className="card-title">{task.title}</h2>
@@ -22,7 +32,12 @@ export const TaskCard = ({ task }: TaskCardProps) => {
         <div className="text-sm text-base-content/60">
           Created: {new Date(task.createAt).toLocaleDateString()}
         </div>
-        <div className="card-actions justify-end">
+        <div 
+          className="card-actions justify-end" 
+          onClick={e => {
+            e.stopPropagation();
+          }}
+        >
           <TaskActions task={task} />
         </div>
       </div>

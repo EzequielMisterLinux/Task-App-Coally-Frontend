@@ -1,13 +1,15 @@
-import { Task } from '../../interfaces/Tasks';
+import { useTaskContext } from '../../context/TaskContext';
+
 import { TaskCard } from './TaskCard';
 
 interface TaskListProps {
-  tasks: Task[];
   isLoading: boolean;
   error: string | null;
 }
 
-export const TaskList = ({ tasks, isLoading, error }: TaskListProps) => {
+export const TaskList = ({ isLoading, error }: TaskListProps) => {
+  const { filteredTasks } = useTaskContext();
+  
   return (
     <div className="mt-8">
       <h2 className="text-xl font-bold mb-4">Recent Tasks</h2>
@@ -22,7 +24,7 @@ export const TaskList = ({ tasks, isLoading, error }: TaskListProps) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tasks.map((task) => (
+          {filteredTasks?.map((task) => (
             <TaskCard key={task._id} task={task} />
           ))}
         </div>

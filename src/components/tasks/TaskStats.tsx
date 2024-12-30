@@ -38,7 +38,7 @@ export const TaskStats = () => {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Today's Tasks Card */}
+        
         <div 
           className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all cursor-pointer"
           onClick={() => setModalType('today')}
@@ -63,7 +63,7 @@ export const TaskStats = () => {
           </div>
         </div>
 
-        {/* Completed Tasks Card */}
+        
         <div 
           className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all cursor-pointer"
           onClick={() => setModalType('completed')}
@@ -88,7 +88,7 @@ export const TaskStats = () => {
           </div>
         </div>
 
-        {/* Pending Tasks Card */}
+        
         <div 
           className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all cursor-pointer"
           onClick={() => setModalType('pending')}

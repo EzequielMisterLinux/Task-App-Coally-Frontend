@@ -5,7 +5,7 @@ interface DeleteTaskProps {
   onDelete?: () => void;
 }
 
-export const DeleteTask = ({ taskId, onDelete }: DeleteTaskProps) => {
+export const DeleteTask = ({ taskId }: DeleteTaskProps) => {
     const { deleteTask } = useTaskContext();
     const [showConfirm, setShowConfirm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -17,6 +17,8 @@ export const DeleteTask = ({ taskId, onDelete }: DeleteTaskProps) => {
         await deleteTask(taskId);
         setShowConfirm(false);
       } catch (err) {
+        console.error(err);
+        
         setError('Failed to delete task');
       } finally {
         setIsDeleting(false);

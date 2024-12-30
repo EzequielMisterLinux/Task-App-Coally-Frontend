@@ -1,6 +1,5 @@
-// contexts/TaskContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Task } from '../interfaces/Tasks';
+import { Task, CreateTaskDto } from '../interfaces/Tasks';
 import { TaskProvider } from '../api/taskProvider';
 
 interface TaskContextType {
@@ -11,17 +10,24 @@ interface TaskContextType {
   completedTasks: Task[];
   pendingTasks: Task[];
   refreshTasks: () => Promise<void>;
-  createTask: (taskData: Partial<Task>) => Promise<void>;
+  createTask: (taskData: CreateTaskDto) => Promise<void>;
   updateTask: (taskId: string, taskData: Partial<Task>) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
+  filteredTasks: Task[];
+  setFilteredTasks: (tasks: Task[]) => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 export const TaskContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFilteredTasks(tasks);
+  }, [tasks]);
 
   const getTodaysTasks = (tasks: Task[]) => {
     const today = new Date();
@@ -55,7 +61,7 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
     }
   };
 
-  const createTask = async (taskData: Partial<Task>) => {
+  const createTask = async (taskData: CreateTaskDto) => {
     try {
       setIsLoading(true);
       setError(null);
@@ -74,7 +80,13 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
     try {
       setIsLoading(true);
       setError(null);
-      await TaskProvider.updateTask(taskId, taskData);
+
+      const updateData = {
+        title: taskData.title,
+        description: taskData.description,
+        completed: taskData.completed
+      };
+      await TaskProvider.updateTask(taskId, updateData);
       await refreshTasks();
     } catch (err) {
       setError('Failed to update task');
@@ -111,6 +123,8 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
     todayTasks: getTodaysTasks(tasks),
     completedTasks: getCompletedTasks(tasks),
     pendingTasks: getPendingTasks(tasks),
+    filteredTasks,
+    setFilteredTasks,
     refreshTasks,
     createTask,
     updateTask,

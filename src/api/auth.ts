@@ -35,6 +35,7 @@ export const authApi = {
 
   checkAuth: async (): Promise<User> => {
     const { data } = await api.get('/profile');
+    
     return data.user;
   }
 };

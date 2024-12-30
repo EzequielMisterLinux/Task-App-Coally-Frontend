@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import { useAuth } from '../context/Auth';
+import { useAuth } from '../context/auth/Auth';
 import { LoginData } from '../types/auth.types';
 import { loginSchema } from '../utils/validations/schemas';
 import { PasswordInput } from './shared/PasswordInput';

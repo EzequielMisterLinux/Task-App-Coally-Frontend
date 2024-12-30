@@ -1,6 +1,5 @@
-// Layout.tsx
 import { ReactNode } from 'react';
-import { useAuth } from '../context/Auth';
+import { useAuth } from '../context/auth/Auth';
 import { UserDropdown } from './UserDropdown';
 
 export const Layout = ({ children }: { children: ReactNode }) => {
