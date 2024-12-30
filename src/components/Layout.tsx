@@ -1,26 +1,44 @@
+// Layout.tsx
 import { ReactNode } from 'react';
 import { useAuth } from '../context/Auth';
 import { UserDropdown } from './UserDropdown';
 
-
 export const Layout = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-
+  
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            </div>
-            {user && <UserDropdown user={user} />}
+    <div className="min-h-screen bg-base-200">
+      <div className="navbar bg-base-100 shadow-lg">
+        <div className="navbar-start">
+          <div className="dropdown">
+            <label tabIndex={0} className="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+              </svg>
+            </label>
+            <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li><a>Dashboard</a></li>
+              <li><a>Notes</a></li>
+              <li><a>Tasks</a></li>
+            </ul>
           </div>
+          <a className="btn btn-ghost normal-case text-xl">Lila tasks</a>
         </div>
-      </nav>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="navbar-center hidden lg:flex">
+          <ul className="menu menu-horizontal px-1">
+            <li><a>Dashboard</a></li>
+            <li><a>Notes</a></li>
+            <li><a>Tasks</a></li>
+          </ul>
+        </div>
+        <div className="navbar-end">
+          {user && <UserDropdown user={user} />}
+        </div>
+      </div>
+      <main className="container mx-auto px-4 py-8">
         {children}
       </main>
     </div>
   );
 };
+

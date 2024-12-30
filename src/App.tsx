@@ -4,10 +4,12 @@ import { PrivateRoute } from './components/PrivateRoute';
 import { AuthRoute } from './components/AuthRoute';
 import { AuthPage } from './pages/AuthPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { ThemeProvider } from './context/ThemeContext';
 
 const App = () => {
   return (
     <BrowserRouter>
+    <ThemeProvider>
       <AuthProvider>
         <Routes>
 
@@ -24,6 +26,7 @@ const App = () => {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 };
