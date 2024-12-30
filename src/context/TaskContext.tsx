@@ -67,7 +67,7 @@ export const TaskContextProvider = ({ children }: { children: React.ReactNode })
       console.error(err);
       
       setError('Failed to fetch tasks');
-      showAlert('error', 'Failed to fetch tasks');
+
     } finally {
       setIsLoading(false);
     }
